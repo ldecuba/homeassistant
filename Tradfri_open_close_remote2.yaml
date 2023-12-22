@@ -1,6 +1,10 @@
 blueprint:
   name: ZHA - IKEA wireless open/close remote
-  description: Control anything using IKEA wireless open/close remote
+  description: 
+    Control anything using IKEA wireless open/close remote
+  
+
+
   domain: automation
   input:
     remote:
