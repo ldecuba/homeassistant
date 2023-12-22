@@ -1,0 +1,62 @@
+blueprint:
+  name: ZHA - IKEA wireless open/close remote
+  description: Control anything using IKEA wireless open/close remote
+  domain: automation
+  input:
+    remote:
+      name: Remote
+      description: IKEA wireless open/close remote to use
+      selector:
+        device:
+          integration: zha
+          model: "TRADFRI open/close remote"
+    button_open_short:
+      name: Open button press
+      description: Action to run on press of Open button
+      default: []
+      selector:
+        action: {}
+    button_close_short:
+      name: Close button press
+      description: Action to run on press of Close button
+      default: []
+      selector:
+        action: {}
+    button_open_long:
+      name: Open button hold
+      description: Action to run on long press of Open button
+      default: []
+      selector:
+        action: {}
+    button_close_long:
+      name: Close button hold
+      description: Action to run on long press of Close button
+      default: []
+      selector:
+        action: {}
+mode: restart
+max_exceeded: silent
+trigger:
+- platform: event
+  event_type: zha_event
+  event_data:
+    device_id: !input remote
+action:
+- variables:
+    command: '{{ trigger.event.data.command }}'
+    cluster_id: '{{ trigger.event.data.cluster_id }}'
+    endpoint_id: '{{ trigger.event.data.endpoint_id }}'
+    args: '{{ trigger.event.data.args }}'
+- choose:
+  - conditions:
+    - '{{ command == ''up_open'' }}'
+    sequence: !input button_open_short
+  - conditions:
+    - '{{ command == ''down_close'' }}'
+    sequence: !input button_close_short
+  - conditions:
+    - '{{ command == ''stop_opening'' }}'
+    sequence: !input button_open_long
+  - conditions:
+    - '{{ command == ''stop_closing'' }}'
+    sequence: !input button_close_long
